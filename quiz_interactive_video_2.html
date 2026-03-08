@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار الفيديو التفاعلي</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f2044;
+    --blue: #1a3a6e;
+    --accent: #2563eb;
+    --light-blue: #3b82f6;
+    --sky: #dbeafe;
+    --white: #ffffff;
+    --yellow: #fbbf24;
+    --green: #22c55e;
+    --red: #ef4444;
+    --gray: #f1f5f9;
+    --text: #1e293b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: linear-gradient(135deg, #0f2044 0%, #1a3a6e 50%, #0f2044 100%);
+    min-height: 100vh;
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* Stars background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,0.2) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 50% 70%, rgba(255,255,255,0.25) 0%, transparent 100%),
+      radial-gradient(1px 1px at 10% 80%, rgba(255,255,255,0.2) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 60%, rgba(255,255,255,0.15) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+    animation: fadeDown 0.8s ease;
+  }
+
+  .header-badge {
+    display: inline-block;
+    background: rgba(37,99,235,0.3);
+    border: 1px solid rgba(59,130,246,0.5);
+    color: #93c5fd;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 18px;
+    border-radius: 50px;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+  }
+
+  .header h1 {
+    font-family: 'Tajawal', sans-serif;
+    font-size: 38px;
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1.3;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 20px rgba(37,99,235,0.5);
+  }
+
+  .header h1 span {
+    color: var(--yellow);
+  }
+
+  .header p {
+    color: #93c5fd;
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  /* PROGRESS */
+  .progress-wrap {
+    background: rgba(255,255,255,0.07);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    animation: fadeUp 0.6s ease;
+  }
+
+  .progress-text {
+    color: var(--white);
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .progress-bar-outer {
+    flex: 1;
+    height: 10px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50px;
+    overflow: hidden;
+  }
+
+  .progress-bar-inner {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--yellow));
+    border-radius: 50px;
+    transition: width 0.5s ease;
+  }
+
+  .progress-score {
+    color: var(--yellow);
+    font-size: 15px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 36px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: fadeUp 0.5s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 200px; height: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--yellow));
+  }
+
+  .question-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .question-num {
+    background: var(--navy);
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 50px;
+  }
+
+  .difficulty-badge {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 50px;
+  }
+  .diff-easy { background: #dcfce7; color: #16a34a; }
+  .diff-medium { background: #fef9c3; color: #ca8a04; }
+  .diff-hard { background: #fee2e2; color: #dc2626; }
+
+  .question-text {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.7;
+    margin-bottom: 28px;
+  }
+
+  /* MINION */
+  .minion-wrap {
+    position: absolute;
+    left: -10px;
+    bottom: -10px;
+    width: 130px;
+    opacity: 0.15;
+    pointer-events: none;
+  }
+
+  .minion-wrap img {
+    width: 100%;
+  }
+
+  /* OPTIONS */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .option-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 14px;
+    background: var(--gray);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: right;
+    font-family: 'Cairo', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: var(--sky);
+    transform: translateX(-4px);
+  }
+
+  .option-label {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .option-btn.correct {
+    border-color: var(--green);
+    background: #dcfce7;
+  }
+  .option-btn.correct .option-label { background: var(--green); }
+
+  .option-btn.wrong {
+    border-color: var(--red);
+    background: #fee2e2;
+  }
+  .option-btn.wrong .option-label { background: var(--red); }
+
+  .option-btn:disabled { cursor: default; }
+
+  /* FEEDBACK */
+  .feedback {
+    display: none;
+    padding: 16px 20px;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct-fb { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+  .feedback.wrong-fb { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+
+  /* NEXT BUTTON */
+  .next-btn {
+    display: none;
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--accent), var(--navy));
+    color: var(--white);
+    border: none;
+    border-radius: 14px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .next-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(37,99,235,0.4); }
+  .next-btn.show { display: block; }
+
+  /* MINION MASCOT SIDE */
+  .mascot-card {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    animation: fadeUp 0.7s ease;
+  }
+
+  .mascot-img {
+    width: 90px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+  }
+
+  .mascot-bubble {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 14px 18px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--navy);
+    position: relative;
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .mascot-bubble::before {
+    content: '';
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 10px solid transparent;
+    border-left-color: var(--white);
+    border-right: none;
+  }
+
+  /* RESULTS */
+  .results-card {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 48px 36px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: fadeUp 0.6s ease;
+    display: none;
+  }
+
+  .results-card.show { display: block; }
+
+  .result-mascot {
+    width: 140px;
+    margin: 0 auto 24px;
+    filter: drop-shadow(0 8px 20px rgba(0,0,0,0.2));
+    animation: bounce 1s ease infinite alternate;
+  }
+
+  @keyframes bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-12px); }
+  }
+
+  .result-score-circle {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--navy));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    box-shadow: 0 8px 30px rgba(37,99,235,0.4);
+  }
+
+  .result-score-num {
+    font-size: 42px;
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1;
+  }
+
+  .result-score-total {
+    font-size: 16px;
+    color: #93c5fd;
+    font-weight: 600;
+  }
+
+  .result-title {
+    font-family: 'Tajawal', sans-serif;
+    font-size: 30px;
+    font-weight: 900;
+    color: var(--navy);
+    margin-bottom: 10px;
+  }
+
+  .result-msg {
+    font-size: 16px;
+    color: #64748b;
+    margin-bottom: 32px;
+    line-height: 1.7;
+  }
+
+  .result-stats {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .stat-box {
+    background: var(--gray);
+    border-radius: 16px;
+    padding: 16px 24px;
+    min-width: 120px;
+  }
+
+  .stat-num { font-size: 28px; font-weight: 900; color: var(--navy); }
+  .stat-label { font-size: 13px; color: #64748b; font-weight: 600; }
+
+  .restart-btn {
+    padding: 16px 40px;
+    background: linear-gradient(135deg, var(--accent), var(--navy));
+    color: var(--white);
+    border: none;
+    border-radius: 14px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .restart-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(37,99,235,0.4); }
+
+  /* SCREEN: INTRO */
+  .intro-card {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 48px 36px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: fadeUp 0.6s ease;
+  }
+
+  .intro-mascot {
+    width: 150px;
+    margin: 0 auto 24px;
+    filter: drop-shadow(0 8px 20px rgba(0,0,0,0.2));
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+  }
+
+  .intro-title {
+    font-family: 'Tajawal', sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+
+  .intro-sub {
+    font-size: 16px;
+    color: #64748b;
+    margin-bottom: 32px;
+    line-height: 1.7;
+  }
+
+  .intro-stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+  }
+
+  .intro-stat {
+    background: var(--sky);
+    border-radius: 14px;
+    padding: 14px 22px;
+    text-align: center;
+  }
+
+  .intro-stat-num { font-size: 26px; font-weight: 900; color: var(--accent); }
+  .intro-stat-label { font-size: 13px; color: #64748b; font-weight: 600; }
+
+  .start-btn {
+    padding: 18px 48px;
+    background: linear-gradient(135deg, var(--accent), var(--navy));
+    color: var(--white);
+    border: none;
+    border-radius: 14px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 8px 25px rgba(37,99,235,0.4);
+  }
+  .start-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(37,99,235,0.5); }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .quiz-section { display: none; }
+  .quiz-section.active { display: block; }
+
+  footer {
+    text-align: center;
+    margin-top: 32px;
+    color: rgba(255,255,255,0.3);
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="header-badge">تطبيقات الحاسب في التعليم</div>
+    <h1>اختبار <span>الفيديو التفاعلي</span></h1>
+    <p>اختبر معلوماتك عن محتوى البريزنتشن</p>
+  </div>
+
+  <!-- INTRO -->
+  <div id="introSection" class="quiz-section active">
+    <div class="intro-card">
+      <img class="intro-mascot" src="minion.jpg" alt="mascot">
+      <div class="intro-title">مرحباً يا بطل</div>
+      <div class="intro-sub">
+        جاهز تتحدى نفسك؟<br>
+        عندك 20 سؤال متدرجة في الصعوبة عن الفيديو التفاعلي وأثره على دافعية الطالب.
+      </div>
+      <div class="intro-stats">
+        <div class="intro-stat">
+          <div class="intro-stat-num">20</div>
+          <div class="intro-stat-label">سؤال</div>
+        </div>
+        <div class="intro-stat">
+          <div class="intro-stat-num">3</div>
+          <div class="intro-stat-label">مستويات</div>
+        </div>
+        <div class="intro-stat">
+          <div class="intro-stat-num">4</div>
+          <div class="intro-stat-label">خيارات لكل سؤال</div>
+        </div>
+      </div>
+      <button class="start-btn" onclick="startQuiz()">ابدأ الاختبار</button>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quizSection" class="quiz-section">
+    <div class="progress-wrap">
+      <span class="progress-text" id="progressText">سؤال 1 من 20</span>
+      <div class="progress-bar-outer">
+        <div class="progress-bar-inner" id="progressBar" style="width:5%"></div>
+      </div>
+      <span class="progress-score" id="scoreText">النقاط: 0</span>
+    </div>
+
+    <div class="mascot-card">
+      <img class="mascot-img" src="minion.jpg" alt="mascot">
+      <div class="mascot-bubble" id="mascotMsg">هيا بينا نبدأ الاختبار يا صديقي!</div>
+    </div>
+
+    <div class="card" id="questionCard">
+      <div class="question-meta">
+        <span class="question-num" id="qNum">السؤال 1</span>
+        <span class="difficulty-badge diff-easy" id="diffBadge">سهل</span>
+      </div>
+      <div class="question-text" id="questionText"></div>
+      <div class="options" id="optionsContainer"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">السؤال التالي ←</button>
+      <div class="minion-wrap">
+        <img src="minion.jpg" alt="">
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="resultsSection" class="quiz-section">
+    <div class="results-card show">
+      <img class="result-mascot" src="minion.jpg" alt="mascot">
+      <div class="result-score-circle">
+        <div class="result-score-num" id="finalScore">0</div>
+        <div class="result-score-total">من 20</div>
+      </div>
+      <div class="result-title" id="resultTitle">أحسنت</div>
+      <div class="result-msg" id="resultMsg"></div>
+      <div class="result-stats">
+        <div class="stat-box">
+          <div class="stat-num" id="correctCount" style="color:#22c55e">0</div>
+          <div class="stat-label">إجابات صحيحة</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="wrongCount" style="color:#ef4444">0</div>
+          <div class="stat-label">إجابات خاطئة</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="percentCount" style="color:#2563eb">0%</div>
+          <div class="stat-label">نسبة النجاح</div>
+        </div>
+      </div>
+      <button class="restart-btn" onclick="restartQuiz()">إعادة الاختبار</button>
+    </div>
+  </div>
+
+  <footer>الفيديو التفاعلي وأثره على دافعية الطالب | تطبيقات الحاسب في التعليم</footer>
+</div>
+
+<script>
+const questions = [
+  // سهل (1-7)
+  {
+    q: "ما تعريف الفيديو التفاعلي وفقاً لـ Mayer (2009)؟",
+    options: ["فيديو رقمي بيستخدم مؤثرات بصرية وصوتية متقدمة", "نوع من الوسائط المتعددة بيتيح للمتعلم التحكم في مسار التعلم من خلال استجابات نشطة", "فيديو تعليمي بيُعرض على شاشة تفاعلية", "محتوى مرئي بيستخدم الذكاء الاصطناعي في التدريس"],
+    correct: 1, diff: "easy",
+    msg: "ممتاز! Mayer ركّز على فكرة التحكم والاستجابة النشطة كجوهر الفيديو التفاعلي."
+  },
+  {
+    q: "ما الفرق الجوهري بين الفيديو العادي والفيديو التفاعلي؟",
+    options: ["الفيديو التفاعلي أعلى جودة في الصورة والصوت", "الفيديو التفاعلي بيحول الطالب من متلقي سلبي لمشارك فعال", "الفيديو العادي أصعب في الإنتاج", "الفيديو التفاعلي بيحتاج أجهزة خاصة للتشغيل"],
+    correct: 1, diff: "easy",
+    msg: "صح! ده الفرق الجوهري، مش في الشكل بس، ده فرق في دور الطالب كله."
+  },
+  {
+    q: "أي من التالي يعد من عناصر الفيديو التفاعلي؟",
+    options: ["دقة الصورة العالية والصوت الاحترافي", "الأسئلة المدمجة ونقاط القرار والفيدباك الفوري", "طول مدة الفيديو وتنوع موضوعاته", "استخدام الرسوم المتحركة والمؤثرات البصرية فقط"],
+    correct: 1, diff: "easy",
+    msg: "عظيم! العناصر الأساسية هي الأسئلة ونقاط القرار والفيدباك الفوري والتفرع والروابط التشعبية."
+  },
+  {
+    q: "وفقاً لمخروط التعلم لإدغار ديل، كم نسبة ما يتذكره الطالب مما يقوله ويفعله؟",
+    options: ["50%", "70%", "90%", "30%"],
+    correct: 2, diff: "easy",
+    msg: "ممتاز! 90% هي أعلى نسبة في المخروط، وده بيوضح أهمية المشاركة الفعلية."
+  },
+  {
+    q: "ما الأداة الأنسب للمبتدئين في إنشاء الفيديو التفاعلي؟",
+    options: ["Kaltura", "Playposit", "Edpuzzle", "Adobe Premiere"],
+    correct: 2, diff: "easy",
+    msg: "صح! Edpuzzle سهلة جداً وبتاخد أي فيديو من يوتيوب وتحطله أسئلة."
+  },
+  {
+    q: "ما الهدف من الفيدباك الفوري في الفيديو التفاعلي؟",
+    options: ["تقليل وقت المشاهدة", "تعريف الطالب بإجابته فوراً وتعزيز التعلم الذاتي", "تسجيل درجات الطالب تلقائياً", "منع الطالب من إعادة مشاهدة الفيديو"],
+    correct: 1, diff: "easy",
+    msg: "صح تماماً! الفيدباك الفوري بيدي الطالب معلومة فورية عن مستواه وبيحفزه يكمل."
+  },
+  {
+    q: "من هم الباحثان اللي قدّما نظرية الدافعية الذاتية؟",
+    options: ["Mayer و Zhang", "Deci و Ryan", "Bonwell و Eison", "Schwartz و Hartman"],
+    correct: 1, diff: "easy",
+    msg: "ممتاز! Deci & Ryan قدّموا النظرية سنة 1985 وهي من أهم النظريات في علم النفس التربوي."
+  },
+  // متوسط (8-14)
+  {
+    q: "ما الاحتياجات الثلاثة التي تحققها نظرية الدافعية الذاتية لـ Deci & Ryan؟",
+    options: ["التعلم والتذكر والتطبيق", "الاستقلالية والكفاءة والانتماء", "المشاركة والتنافس والتقييم", "الفهم والتحليل والتركيب"],
+    correct: 1, diff: "medium",
+    msg: "ممتاز! الاستقلالية والكفاءة والانتماء هم الاحتياجات الأساسية اللي بتحرك دافعية الإنسان."
+  },
+  {
+    q: "كيف يحقق الفيديو التفاعلي احتياج الاستقلالية في نظرية الدافعية الذاتية؟",
+    options: ["بيديه محتوى مجاني", "بيخليه يتحكم في مسار تعلمه ويختار", "بيديه شهادة في الآخر", "بيخليه يشتغل في مجموعات"],
+    correct: 1, diff: "medium",
+    msg: "صح! الطالب لما بيختار مساره بنفسه بيحس بالاستقلالية وده بيرفع دافعيته."
+  },
+  {
+    q: "ما العلاقة بين الفيديو التفاعلي ونظرية التعلم النشط؟",
+    options: ["الاتنين بيعتمدوا على المحاضرة التقليدية", "الفيديو التفاعلي تطبيق مباشر للتعلم النشط لأنه بيجبر الطالب يفكر ويستجيب", "نظرية التعلم النشط ضد استخدام التكنولوجيا", "لا توجد علاقة مباشرة بينهما"],
+    correct: 1, diff: "medium",
+    msg: "ممتاز! Bonwell & Eison اللي قدّموا نظرية التعلم النشط سنة 1991 بيؤكدوا على دور المشارك الفعال."
+  },
+  {
+    q: "ما النسبة التي يتذكرها الطالب مما يسمعه ويشوفه معاً وفقاً لمخروط ديل؟",
+    options: ["30%", "40%", "50%", "60%"],
+    correct: 2, diff: "medium",
+    msg: "صح! لما الطالب بيسمع ويشوف في نفس الوقت بيتذكر 50%، وده أعلى من المشاهدة أو السماع بمفردهم."
+  },
+  {
+    q: "أي أداة من أدوات الفيديو التفاعلي توفر أعمق تحليلات لأداء الطالب؟",
+    options: ["H5P", "Edpuzzle", "Playposit", "Kaltura"],
+    correct: 2, diff: "medium",
+    msg: "صح! Playposit متخصصة في التحليلات العميقة لأداء الطالب وده بيميزها عن الباقيين."
+  },
+  {
+    q: "ما الخطوة الثانية في تحويل المحتوى الخطي لمحتوى تفاعلي؟",
+    options: ["اختيار الأداة المناسبة", "تحديد الأهداف التعليمية", "إضافة الأسئلة", "تجربة الفيديو قبل العرض"],
+    correct: 1, diff: "medium",
+    msg: "ممتاز! تحديد الأهداف التعليمية هو الأساس اللي بتبني عليه كل نقاط التفاعل في الفيديو."
+  },
+  {
+    q: "ما الذي أثبتته دراسة Zhang et al. (2006) عن الفيديو التفاعلي؟",
+    options: ["إن الفيديو التفاعلي أغلى في الإنتاج", "إن الطلاب اللي استخدموا الفيديو التفاعلي حققوا أداء أعلى ودافعية أكبر", "إن الفيديو التفاعلي مناسب للجامعات فقط", "إن الفيديو العادي أكثر فاعلية في التعليم الأساسي"],
+    correct: 1, diff: "medium",
+    msg: "صح! Zhang et al. من أهم الدراسات اللي أثبتت فاعلية الفيديو التفاعلي بالأرقام."
+  },
+  // صعب (15-20)
+  {
+    q: "كيف يربط الفيديو التفاعلي بين النظريات الثلاثة: التعلم النشط والدافعية الذاتية ومخروط ديل؟",
+    options: ["بيستخدم نفس الأدوات التقنية للنظريات الثلاثة", "بيجمع المشاركة الفعالة والتحكم والاستجابة العملية في تجربة واحدة", "بيثبت إن النظريات الثلاثة غلط", "بيستبدل النظريات الثلاثة بنموذج جديد"],
+    correct: 1, diff: "hard",
+    msg: "ممتاز! ده هو جوهر البريزنتشن، الفيديو التفاعلي بيجمع المشاركة والتحكم والاستجابة في آن واحد."
+  },
+  {
+    q: "ما المقصود بالتعلم التكيفي Adaptive Learning في سياق الفيديو التفاعلي؟",
+    options: ["إن الطالب بيتكيف مع صعوبة الفيديو بمرور الوقت", "إن الفيديو بيتكيف تلقائياً مع مستوى الطالب واستجاباته بمساعدة الذكاء الاصطناعي", "إن المعلم بيعدل الفيديو يدوياً حسب كل طالب", "إن الطالب بيختار مستواه بنفسه قبل المشاهدة"],
+    correct: 1, diff: "hard",
+    msg: "صح! ده مستقبل الفيديو التفاعلي، الذكاء الاصطناعي بيخلي كل طالب يتعلم بمساره الخاص."
+  },
+  {
+    q: "وفقاً لتعريف Schwartz & Hartman (2007)، ما الذي يميز الفيديو التفاعلي عن غيره؟",
+    options: ["جودة الإنتاج العالية", "تحويل دور المشاهد من متلقي سلبي لمشارك فعال عبر قرارات وأسئلة مدمجة", "استخدام تقنيات الواقع الافتراضي", "الاعتماد على الذكاء الاصطناعي في التوصيات"],
+    correct: 1, diff: "hard",
+    msg: "ممتاز! Schwartz & Hartman ركّزوا على التحول في دور المشاهد كجوهر تعريف الفيديو التفاعلي."
+  },
+  {
+    q: "لماذا يُعد الفيديو التفاعلي في قمة مخروط التعلم لإدغار ديل؟",
+    options: ["لأنه الأغلى في الإنتاج", "لأنه بيجمع المشاهدة مع الاستجابة الفعلية مما يرفع نسبة التذكر لـ 90%", "لأنه الأحدث تكنولوجياً", "لأن الطلاب بيحبوه أكتر من غيره"],
+    correct: 1, diff: "hard",
+    msg: "صح! المخروط بيثبت إن اللي بتعمله بتتذكره أكتر، والفيديو التفاعلي بيخلي الطالب يعمل فعلاً."
+  },
+  {
+    q: "ما الفرق الجوهري بين H5P وKaltura من حيث الاستخدام المؤسسي؟",
+    options: ["H5P مدفوعة وKaltura مجانية", "H5P مفتوحة المصدر ومجانية مع تكامل ممتاز مع LMS، بينما Kaltura أكثر احترافية للجامعات الكبيرة لكنها أصعب", "الاتنين نفس الإمكانيات بأسعار مختلفة", "Kaltura مناسبة للمبتدئين أكتر من H5P"],
+    correct: 1, diff: "hard",
+    msg: "ممتاز! فهمك للفرق بين الأدوات بيساعدك تختار الأنسب لكل موقف تعليمي."
+  },
+  {
+    q: "كيف يسهم الفيديو التفاعلي في تقليل قلق التقييم لدى الطالب؟",
+    options: ["بيلغي الاختبارات النهائية", "الأسئلة المدمجة بتعوّد الطالب على التقييم بشكل تدريجي ومريح داخل سياق التعلم", "بيعطيه الإجابات مسبقاً", "بيقلل عدد الاختبارات في الفصل الدراسي"],
+    correct: 1, diff: "hard",
+    msg: "ممتاز! ده من أهم المزايا النفسية للفيديو التفاعلي، بيبني ثقة الطالب بنفسه تدريجياً."
+  }
+];
+
+const mascotMessages = {
+  easy: ["سؤال سهل، إنت قادر!", "ركّز شوية وهتعرف الإجابة.", "الأسئلة السهلة بتبني الثقة!"],
+  medium: ["السؤال ده محتاج تفكير أكتر.", "فكّر في محتوى البريزنتشن كويس.", "مستوى متوسط، إنت أكيد عارفها!"],
+  hard: ["ده سؤال صعب، فكّر معايا!", "استحضر كل اللي اتعلمته!", "الأسئلة الصعبة هي اللي بتفرق الطلاب المتميزين!"]
+};
+
+let current = 0;
+let score = 0;
+let answered = 0;
+
+function getMascotMsg(diff) {
+  const msgs = mascotMessages[diff];
+  return msgs[Math.floor(Math.random() * msgs.length)];
+}
+
+function startQuiz() {
+  document.getElementById('introSection').classList.remove('active');
+  document.getElementById('quizSection').classList.add('active');
+  loadQuestion();
+}
+
+function loadQuestion() {
+  const q = questions[current];
+  document.getElementById('qNum').textContent = 'السؤال ' + (current + 1);
+  const diffMap = { easy: { text: 'سهل', cls: 'diff-easy' }, medium: { text: 'متوسط', cls: 'diff-medium' }, hard: { text: 'صعب', cls: 'diff-hard' } };
+  const d = diffMap[q.diff];
+  const badge = document.getElementById('diffBadge');
+  badge.textContent = d.text;
+  badge.className = 'difficulty-badge ' + d.cls;
+  document.getElementById('questionText').textContent = q.q;
+  document.getElementById('mascotMsg').textContent = getMascotMsg(q.diff);
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  const pct = ((current + 1) / questions.length * 100).toFixed(0);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressText').textContent = 'سؤال ' + (current + 1) + ' من ' + questions.length;
+  document.getElementById('scoreText').textContent = 'النقاط: ' + score;
+
+  const labels = ['أ', 'ب', 'ج', 'د'];
+  const container = document.getElementById('optionsContainer');
+  container.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = '<span class="option-label">' + labels[i] + '</span>' + opt;
+    btn.onclick = () => selectAnswer(i, btn);
+    container.appendChild(btn);
+  });
+}
+
+function selectAnswer(idx, btn) {
+  const q = questions[current];
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(b => b.disabled = true);
+
+  const feedback = document.getElementById('feedback');
+
+  if (idx === q.correct) {
+    btn.classList.add('correct');
+    score++;
+    answered++;
+    feedback.textContent = 'إجابة صحيحة! ' + q.msg;
+    feedback.className = 'feedback correct-fb show';
+    document.getElementById('mascotMsg').textContent = 'رائع! إجابة صحيحة يا بطل!';
+  } else {
+    btn.classList.add('wrong');
+    answered++;
+    btns[q.correct].classList.add('correct');
+    const labels = ['أ', 'ب', 'ج', 'د'];
+    feedback.textContent = 'للأسف غلط. الإجابة الصحيحة هي (' + labels[q.correct] + ') ' + q.options[q.correct];
+    feedback.className = 'feedback wrong-fb show';
+    document.getElementById('mascotMsg').textContent = 'مش مشكلة، المهم تتعلم من الغلطة!';
+  }
+
+  document.getElementById('scoreText').textContent = 'النقاط: ' + score;
+  document.getElementById('nextBtn').className = 'next-btn show';
+
+  if (current === questions.length - 1) {
+    document.getElementById('nextBtn').textContent = 'عرض النتيجة ←';
+  }
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) {
+    showResults();
+  } else {
+    loadQuestion();
+  }
+}
+
+function showResults() {
+  document.getElementById('quizSection').classList.remove('active');
+  document.getElementById('resultsSection').classList.add('active');
+
+  const pct = Math.round((score / questions.length) * 100);
+  document.getElementById('finalScore').textContent = score;
+  document.getElementById('correctCount').textContent = score;
+  document.getElementById('wrongCount').textContent = questions.length - score;
+  document.getElementById('percentCount').textContent = pct + '%';
+
+  let title, msg;
+  if (pct >= 90) {
+    title = 'ممتاز يا بطل!';
+    msg = 'أداء استثنائي! إنت متمكن من محتوى الفيديو التفاعلي بشكل احترافي.';
+  } else if (pct >= 75) {
+    title = 'أحسنت!';
+    msg = 'أداء كويس جداً! في نقاط بسيطة محتاج تراجعها وهتبقى متميز.';
+  } else if (pct >= 60) {
+    title = 'كويس!';
+    msg = 'أداء مقبول، لكن راجع محتوى البريزنتشن أكتر عشان تتأكد من الأجزاء اللي فاتتك.';
+  } else {
+    title = 'حاول تاني!';
+    msg = 'محتاج تراجع محتوى البريزنتشن من الأول. كل بداية صعبة والمهم تستمر!';
+  }
+
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultMsg').textContent = msg;
+}
+
+function restartQuiz() {
+  current = 0;
+  score = 0;
+  answered = 0;
+  document.getElementById('resultsSection').classList.remove('active');
+  document.getElementById('quizSection').classList.add('active');
+  loadQuestion();
+}
+</script>
+</body>
+</html>
